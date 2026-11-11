@@ -1,0 +1,229 @@
+# ============================================================
+# 1. 敏感凭据与密钥（最高优先级，绝对不能进仓库）
+# ============================================================
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.p8
+*.pfx
+*.crt
+*.cer
+*.der
+id_rsa*
+id_dsa*
+id_ed25519*
+.netrc
+
+secrets.json
+credentials.json
+config/secrets.*
+*secret*
+*password*
+*credential*
+*token*
+*api*key*
+*apikey*
+*access*token*
+*oauth*token*
+*refresh*token*
+
+# 云服务凭据
+.aws/credentials
+.aws/config
+gcp-keyfile.json
+azure-credentials.json
+
+# ============================================================
+# 2. AI Agent / 编程助手项目级配置（市面上常见工具）
+# ============================================================
+
+# Claude Code (Anthropic)
+.claude/
+*.claude.bak
+.claude-sessions/
+.claude-context/
+claude-chat-*.txt
+claude-context.md
+CLAUDE.md
+
+# Cursor (Anysphere)
+.cursor/
+.cursor-tutor/
+.cursor-settings/
+cursor-composer-*/
+.cursorrules
+.cursorignore
+
+# GitHub Copilot
+.copilot/
+.github-copilot/
+copilot-chat-*.md
+
+# Windsurf / Codeium
+.windsurf/
+.windsurfrules
+windsurf-context.md
+.codeium/
+codeium-chat-*/
+.codeiumignore
+
+# Aider
+.aider*
+.aider.tags.cache.v3/
+.aider.tags.cache.v2/
+.aider.chat.history.md
+.aider.input.history
+.aider.llm.history
+.aiderignore
+
+# Continue.dev
+.continue/
+continue-session-*/
+.continueignore
+
+# Cline
+.clineignore
+
+# Roo Code
+.roo/
+.rooignore
+
+# Gemini CLI
+.gemini/
+!/.gemini/config.yaml
+.geminiignore
+
+# OpenAI Codex CLI
+.codex/
+!.codex/config.toml
+
+# Tabnine
+.tabnine/
+tabnine-chat-*/
+
+# JetBrains AI Assistant
+.aiignore
+.intellij-ai/
+
+# 其他常见 AI 工具
+.bolt/
+.v0/
+.githubnext/
+.zed/
+.junie/
+.cody/
+.sourcegraph/
+
+# ============================================================
+# 3. AI 会话 / 缓存 / 临时产物（容易混入仓库）
+# ============================================================
+.ai-context/
+.ai-sessions/
+.ai-chat-history/
+.ai-cache/
+.ai-temp/
+.ai-assistant-*/
+ai-conversation-*/
+ai-context-*.md
+ai-session-*.json
+
+CONTEXT_*.md
+HANDOFF_*.md
+AI_NOTES_*.md
+SESSION_*.md
+CHAT_HISTORY_*.md
+
+.prompt-cache/
+.llm-cache/
+.model-cache/
+ai-generated-*.py
+ai-temp-*.js
+llm-output-*.md
+.ai-drafts/
+
+*.gguf
+*.safetensors
+models/
+local-models/
+training-data/
+.datasets/
+
+# ============================================================
+# 4. 环境与依赖（Node.js / Java / 通用）
+# ============================================================
+node_modules/
+.pnpm-store/
+.npm/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+target/
+out/
+build/
+dist/
+*.class
+*.jar
+*.war
+
+# ============================================================
+# 5. 构建缓存与工具产物
+# ============================================================
+.cache/
+.temp/
+tmp/
+temp/
+*.tsbuildinfo
+.eslintcache
+.stylelintcache
+.parcel-cache/
+.turbo/
+.nx/cache/
+
+coverage/
+.nyc_output/
+htmlcov/
+lcov.info
+
+# ============================================================
+# 6. 日志与运行时文件
+# ============================================================
+*.log
+logs/
+log/
+*.pid
+*.sock
+
+# ============================================================
+# 7. 编辑器 / IDE / 操作系统（团队统一忽略，避免个人配置污染）
+# ============================================================
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+*.swp
+*.swo
+*~
+.dsh-tmp
