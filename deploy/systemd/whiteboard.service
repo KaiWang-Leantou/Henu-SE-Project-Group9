@@ -1,0 +1,39 @@
+# 裸机部署：systemd 托管后端 jar
+# 安装：cp deploy/systemd/whiteboard.service /etc/systemd/system/
+#      systemctl daemon-reload && systemctl enable --now whiteboard
+
+[Unit]
+Description=Whiteboard Backend (Spring Boot)
+After=network-online.target mysql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=wb
+Group=wb
+WorkingDirectory=/opt/whiteboard
+
+# 环境变量（JWT 密钥、数据库连接）放这里，权限 600，属主 wb
+EnvironmentFile=/etc/whiteboard/wb.env
+Environment=TZ=Asia/Shanghai
+
+ExecStart=/usr/bin/java -Xms256m -Xmx512m -XX:+UseSerialGC \
+          -jar /opt/whiteboard/app.jar --spring.profiles.active=mysql
+
+Restart=always
+RestartSec=5
+SuccessExitStatus=143
+
+# 日志进 journald，用 journalctl -u whiteboard -f 查看
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=whiteboard
+
+# 简单加固
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/opt/whiteboard/data
+
+[Install]
+WantedBy=multi-user.target

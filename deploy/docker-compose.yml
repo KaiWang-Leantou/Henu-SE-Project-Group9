@@ -1,0 +1,65 @@
+# 一键起：MySQL 8 + 后端 + Nginx
+# 用法（在 deploy/ 目录）：
+#   cp env.example .env        # 然后改里面的密码和 JWT 密钥
+#   docker compose up -d --build
+#
+# 前端需要先构建：cd ../frontend && npm run build
+
+name: whiteboard
+
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: wb
+      MYSQL_USER: wb
+      MYSQL_PASSWORD: ${WB_DB_PASSWORD:?请在 .env 里设置 WB_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?请在 .env 里设置 MYSQL_ROOT_PASSWORD}
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb-buffer-pool-size=128M
+      - --max-connections=100
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  app:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql
+      TZ: Asia/Shanghai
+      WB_DB_URL: jdbc:mysql://db:3306/wb?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+      WB_DB_USER: wb
+      WB_DB_PASSWORD: ${WB_DB_PASSWORD}
+      WB_JWT_SECRET: ${WB_JWT_SECRET:?请在 .env 里设置 WB_JWT_SECRET}
+      JAVA_OPTS: -Xms256m -Xmx512m
+    # 只绑本机，公网只暴露 80/443（由 web 转发）
+    ports:
+      - "127.0.0.1:8080:8080"
+
+  web:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+    volumes:
+      - ../frontend/dist:/usr/share/nginx/html:ro
+      - ./nginx/docker.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  db-data:
