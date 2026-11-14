@@ -1,0 +1,5 @@
+# 本地 H2 文件库（dev profile 运行后生成，绝不入库）
+data/
+
+# 构建产物兜底（根仓库已有 target/，这里再声明一次，方便单独打包 backend）
+target/

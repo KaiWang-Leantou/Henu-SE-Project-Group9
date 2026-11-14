@@ -227,3 +227,6 @@ Desktop.ini
 *.swo
 *~
 .dsh-tmp
+
+# Office 临时锁文件（Word/Excel 打开文档时生成，绝不提交）
+~$*
