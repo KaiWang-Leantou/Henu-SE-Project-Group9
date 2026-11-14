@@ -1,0 +1,7 @@
+# 测试：独立内存库，避免污染 dev 的 H2 文件库；Flyway 照常执行真实迁移
+spring:
+  datasource:
+    url: jdbc:h2:mem:wb_test;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""

@@ -1,0 +1,7 @@
+# mysql：生产/演示库，连接信息全部由环境变量覆盖，并提供课设本地默认值
+spring:
+  datasource:
+    url: "${WB_DB_URL:jdbc:mysql://127.0.0.1:3306/wb?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai}"
+    username: "${WB_DB_USER:root}"
+    password: "${WB_DB_PASSWORD:root}"
+    driver-class-name: com.mysql.cj.jdbc.Driver

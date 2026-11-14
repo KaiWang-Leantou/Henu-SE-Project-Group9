@@ -1,0 +1,12 @@
+# dev：H2 文件库，重启后数据仍在；AUTO_SERVER 允许本地工具同时连接查看
+# 注意：部分受限令牌/只读 ACL 环境下 NIO 的 isWritable 恒为 false，H2 会按只读打开并拒绝
+# AUTO_SERVER；H2AutoServerFallbackEnvironmentPostProcessor 会自动降级为无 AUTO_SERVER（只读启动）。
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/wb;MODE=MySQL;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  h2:
+    console:
+      enabled: false
