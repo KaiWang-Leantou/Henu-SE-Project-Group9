@@ -7,10 +7,11 @@
 
 | 目录 | 内容 |
 | :--- | :--- |
-| [`docs/`](docs/00-README.md) | **契约文档**：数据模型、通信协议、游戏状态机（改协议先改这里） |
+| [`docs/`](docs/00-README.md) | **契约文档 + 技术栈说明**（改协议先改这里） |
 | [`backend/`](backend) | Spring Boot 3.5.16 + 原生 WebSocket + JPA（H2 开发 / MySQL 生产） |
 | [`frontend/`](frontend) | Vue 3.5 + TypeScript + Vite 8，画布内核为**框架无关的纯 TS** |
-| [`scripts/`](scripts/smoke-ws.mjs) | 端到端联调脚本（两客户端 + 断线补发校验） |
+| [`scripts/`](scripts/smoke-ws.mjs) | 端到端联调脚本（REST / WS / 版本归档） |
+| [`deploy/`](deploy/README.md) | 部署配置与**运维手册**（部署者使用） |
 
 ## 快速开始
 

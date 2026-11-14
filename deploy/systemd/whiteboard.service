@@ -33,7 +33,9 @@ SyslogIdentifier=whiteboard
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=full
-ReadWritePaths=/opt/whiteboard/data
+# 注意：这里不要再写 ReadWritePaths=/opt/whiteboard/data。
+# 该路径不存在时 systemd 会直接失败（status=226/NAMESPACE）。
+# 生产用 MySQL 不需要它；若在服务器上用 H2 文件库，请先 mkdir -p /opt/whiteboard/data 再自行加回本行。
 
 [Install]
 WantedBy=multi-user.target

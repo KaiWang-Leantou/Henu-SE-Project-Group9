@@ -1,6 +1,8 @@
 # 部署手册
 
 > 目标：把「前端静态 + 后端 jar + MySQL」这套东西放到一台 Linux 服务器上，公网能访问、别人能扫码一起画。
+>
+> 本文件是**首次部署的步骤清单**；日常启停、日志、数据库维护、排障、更新回滚见 **[运维手册](运维手册.md)**（部署者个人用，组员不需要看）。
 
 ## 0. 现在能部署吗？
 
@@ -246,6 +248,7 @@ sudo crontab -e
 | 时间差 8 小时 | 时区没设 | 容器/主机都设 `TZ=Asia/Shanghai` |
 | 启动报 `Lock file exists: ...wb.lock.db` | 上次是**强制结束**的（kill -9 / 直接关窗口），H2 没来得及清理 | 正常停用 `systemctl stop`（SIGTERM 会清理）；已残留就删锁：`rm -f data/wb.lock.db` 再启动 |
 | 日志出现 `H2 文件 ... NIO 判定为 false ... 数据库只读` | 当前运行在受限沙箱里（Java 的 `Files.isWritable` 被拦截，对**所有**文件返回 false） | 在你自己的终端/服务器终端跑即可；服务器用 MySQL 时完全不会出现 |
+| `systemctl status` 显示 `status=226/NAMESPACE`，日志 `Failed to set up mount namespacing: /opt/whiteboard/data` | unit 里写了 `ReadWritePaths=/opt/whiteboard/data`，但该目录不存在（MySQL 模式用不到它） | 删除该行：`sudo sed -i '/ReadWritePaths=/d' /etc/systemd/system/whiteboard.service && sudo systemctl daemon-reload && sudo systemctl restart whiteboard`；或先 `mkdir -p /opt/whiteboard/data` |
 
 ## 9. 没有服务器怎么办
 
