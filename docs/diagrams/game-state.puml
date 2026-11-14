@@ -1,0 +1,51 @@
+@startuml game-state
+!pragma layout smetana
+title 你画我猜 · 会话状态机（V1 = classic，V2 = relay）
+
+hide empty description
+skinparam state {
+  BackgroundColor #F5F7FB
+  BorderColor #4A5A8A
+  ArrowColor #4A5A8A
+}
+
+[*] --> Lobby
+
+Lobby --> Preparing : game.start / 洗牌排座、抽词
+Preparing --> Playing : 首位画手确定 / page.add(roundId)
+
+state Playing {
+  [*] --> Drawing
+
+  Drawing --> Guessing : [classic] turn.commit / round.timeout
+  Drawing --> Handoff : [relay] turn.commit 且还有下一位
+  Handoff --> Drawing : handoff.ready / 切换 drawerId
+  Drawing --> Guessing : [relay] turn.commit 且已是最后一位
+
+  Guessing --> [*] : round.allGuessed / round.timeout
+}
+
+Playing --> Reveal : 本轮结束
+Reveal --> Scoring : 展示完成 / 计分
+Scoring --> Playing : round < rounds / 新一轮 page.add
+Scoring --> Finished : round = rounds / 落库 wb_game_session
+
+Playing --> Paused : player.disconnect (drawer)
+Paused --> Playing : player.reconnect (≤ 30s)
+Paused --> Finished : 超时 > 30s
+
+Finished --> Lobby : owner 返回房间
+Lobby --> [*] : 房间解散
+
+note right of Playing
+  Playing.Drawing 期间：
+  仅 drawerId 可写当前轮页，
+  canWrite() 由 BoardPlugin 判定。
+end note
+
+note bottom of Paused
+  倒计时冻结；重连后恢复剩余时间。
+  猜词者断线不影响状态机。
+end note
+
+@enduml

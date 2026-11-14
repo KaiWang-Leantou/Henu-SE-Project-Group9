@@ -1,0 +1,37 @@
+@startuml board-op-sequence
+title 一次笔划操作的完整时序（含权限钩子与持久化）
+
+autonumber
+actor "客户端 A\n(画手)" as A
+actor "客户端 B\n(观察者)" as B
+participant "WS 网关\nSocketHandler" as GW
+participant "房间执行器\n(串行, 保证 seq)" as ROOM
+participant "BoardPlugin\n(game 插件)" as PLG
+database "MySQL" as DB
+
+== 绘制中：只广播，不落库 ==
+A -> GW : stroke.append{strokeId, pts[]}
+GW -> B : stroke.append{actor, strokeId, pts[]}
+GW -> A : （不回执，节流 40–60ms）
+
+== 抬笔：进入定序流程 ==
+A -> GW : stroke.end{cid, strokeId}
+GW -> ROOM : submit(cmd = stroke.add)
+ROOM -> PLG : canWrite(member, op)
+PLG --> ROOM : true（或 false → error FORBIDDEN）
+ROOM -> ROOM : 应用命令 → seq++
+ROOM -> DB : 异步写 wb_board_op(board_id, seq, cmd)
+ROOM -> GW : op{seq, actor, ch:"board", cmd}
+GW -> A : op{seq}
+GW -> B : op{seq}
+GW -> A : ack{cid, seq}
+
+== 快照：防抖 2s 或累计 50 op ==
+ROOM -> DB : UPDATE wb_board SET doc_json=?, doc_seq=? (事务)
+
+== 重连补发 ==
+B -> GW : join{boardId, lastSeq}
+GW -> ROOM : replay(lastSeq+1 .. seq)
+ROOM -> B : op{seq} …（逐条）
+
+@enduml
